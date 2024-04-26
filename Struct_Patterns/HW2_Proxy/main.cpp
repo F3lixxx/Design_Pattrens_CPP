@@ -6,47 +6,51 @@
 class VeryHeavyDB {
 public:
 	std::string GetData(const std::string& key) const noexcept {
-		return "Very Big Data string: " + key;
+		return "value";
 	}
+
+	std::string decrease_access(const std::string& key) noexcept {
+		usage_count[key]--;
+	}
+
+protected:
+	std::map<std::string, int> usage_count;
 };
 
-class CacheProxyDB : VeryHeavyDB {
-public:
-	explicit CacheProxyDB(VeryHeavyDB* real_object) : real_db_(real_object) {}
-	std::string GetData(const std::string& key) noexcept {
-		if (cache_.find(key) == cache_.end()) {
-			std::cout << "Get from real object\n";
-			cache_[key] = real_db_->GetData(key);
-		}
-		else {
-			std::cout << "Get from cache\n";
-		}
-		return cache_.at(key);
-	}
-private:
-	std::map<std::string, std::string> cache_;
-	VeryHeavyDB* real_db_;
-};
-
-class OneShotDB :VeryHeavyDB {
+class OneShotDB : public VeryHeavyDB {
 public:
 	explicit OneShotDB(VeryHeavyDB* real_object, size_t shots = 1) : real_obj(real_object), view(shots) {}
-	int limit_db(const size_t& shooter) noexcept override{
-		if (shooter == view) {
-			std::cout << "error\n";
-			view[shooter] = real_obj->GetData(shooter);
+	std::string GetData(const std::string& key) noexcept  {
+		if (view == 0 || usage_count[key] >= static_cast<int>(view)) {
+			return "error";
 		}
 		else {
-			std::cout << "value\n";
-			return 1;
+			usage_count[key]++;
+			return real_obj->GetData(key);
 		}
 	}
+
 private:
 	VeryHeavyDB* real_obj;
-	std::vector<size_t> view;
+	size_t view;
 };
 
 int main() {
+	auto real_db = VeryHeavyDB();
+	auto limit_db = OneShotDB(std::addressof(real_db), 5);
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
+	std::cout << limit_db.GetData("key") << std::endl;
 
 	return 0;
 }
