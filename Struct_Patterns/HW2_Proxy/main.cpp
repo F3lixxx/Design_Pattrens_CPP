@@ -21,7 +21,7 @@ class OneShotDB : public VeryHeavyDB {
 public:
 	explicit OneShotDB(VeryHeavyDB* real_object, size_t shots = 1) : real_obj(real_object), view(shots) {}
 	std::string GetData(const std::string& key) noexcept  {
-		if (view == 0 || usage_count[key] >= static_cast<int>(view)) {
+		if (usage_count[key] >= static_cast<int>(view)) {
 			return "error";
 		}
 		else {
@@ -37,7 +37,7 @@ private:
 
 int main() {
 	auto real_db = VeryHeavyDB();
-	auto limit_db = OneShotDB(std::addressof(real_db), 5);
+	auto limit_db = OneShotDB(std::addressof(real_db), 1);
 	std::cout << limit_db.GetData("key") << std::endl;
 	std::cout << limit_db.GetData("key") << std::endl;
 	std::cout << limit_db.GetData("key") << std::endl;
@@ -51,6 +51,5 @@ int main() {
 	std::cout << limit_db.GetData("key") << std::endl;
 	std::cout << limit_db.GetData("key") << std::endl;
 	std::cout << limit_db.GetData("key") << std::endl;
-
 	return 0;
 }

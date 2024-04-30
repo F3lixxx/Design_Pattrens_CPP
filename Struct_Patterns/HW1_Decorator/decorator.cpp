@@ -47,6 +47,7 @@
 	int main() {
 		auto text_par = new Paragraph(new Text());
 		text_par->render("Hello World");
+
 		auto text_view = new Reversed(new Text());
 		text_view->render("Hello World");
 
