@@ -1,7 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <filesystem>
-#include <windows.h>
 
 enum LogLevel { DEBUG, INFO, WARNING, CRITICAL };
 
@@ -12,7 +10,7 @@ public:
 };
 
 class ConsoleLogCommand : public LogCommand {
-public: 
+public:
 	 void print(const std::string& message) override {
         std::cout << "Console Log: " << message << std::endl;
     }
@@ -20,30 +18,11 @@ public:
 
 class FileLog : public LogCommand {
 public:
-	FileLog(std::string name, LogLevel error) : filename(name), levelToString(error) {}
-
-	void print(const std::string& message) {
-		filename << message;
-		filename.close();
-	}
-
-private:
-	std::ofstream filename;
-
-    std::string levelToString(LogLevel level)
-    {
-        switch (level) {
-        case DEBUG:
-            return "DEBUG";
-        case INFO:
-            return "INFO";
-        case WARNING:
-            return "WARNING";
-        case CRITICAL:
-            return "CRITICAL";
-        default:
-            return "UNKNOWN";
-        }
+    void print(const std::string& message) override {
+        std::string path;
+        std::ofstream file( "log.txt");
+        file << message << std::endl;
+        file.close();
     }
 };
 
@@ -52,11 +31,12 @@ void print(LogCommand& command, const std::string& message) {
 }
 
 int main() {
-	std::string _path;
+    std::string path;
+    std::cin >> path;
+    std::ofstream pathFile(path);
 	ConsoleLogCommand consoleView;
-	FileLog logFile("Log.txt", Debug);
-
-	print(logFile, "File Log");
+	FileLog logFile;
+	print(logFile, "symbols");
 	print(consoleView, "Error");
     return 0;
 }
