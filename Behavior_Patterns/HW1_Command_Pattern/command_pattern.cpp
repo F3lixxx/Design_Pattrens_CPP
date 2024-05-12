@@ -16,29 +16,36 @@ public:
     }
 };
 
-class FileLog : public LogCommand {
+class fileLog : public LogCommand{
 public:
-
-    void print(const std::string& message) override {
-        std::string path;
-        std::ofstream file( "log.txt");
+    fileLog(std::ofstream& lifelog) : file(lifelog) {
+        if(!file.is_open()){
+            std::cout << "Error to open" << std::endl;
+        }
+    };
+    void print(const std::string& message) override{
         file << message << std::endl;
         file.close();
-    }
+    };
+
+private:
+    std::ofstream& file;
 };
 
-void print(LogCommand& command, const std::string& message) {
+void print(LogLevel Log,LogCommand& command, const std::string& message) {
 	command.print(message);
 }
 
 int main() {
     std::string path;
-    std::cin >> path;
-    std::ofstream pathFile;
+    std::cout << "Enter a path with name of file" << std::endl;
+    std::getline(std::cin, path);
 
-	ConsoleLogCommand consoleView;
-	FileLog logFile;
-	print(logFile, "symbols");
-	print(consoleView, "Error");
+    std::ofstream pathFile(path);
+    ConsoleLogCommand consoleView;
+    fileLog log(pathFile);
+
+    print(DEBUG,log, "Error in file");
+	print(DEBUG,consoleView, "Error");
     return 0;
 }
