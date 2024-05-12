@@ -18,6 +18,7 @@ public:
 
 class FileLog : public LogCommand {
 public:
+
     void print(const std::string& message) override {
         std::string path;
         std::ofstream file( "log.txt");
@@ -33,7 +34,8 @@ void print(LogCommand& command, const std::string& message) {
 int main() {
     std::string path;
     std::cin >> path;
-    std::ofstream pathFile(path);
+    std::ofstream pathFile;
+
 	ConsoleLogCommand consoleView;
 	FileLog logFile;
 	print(logFile, "symbols");
